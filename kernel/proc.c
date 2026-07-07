@@ -422,42 +422,66 @@ kwait(uint64 addr)
 //  - swtch to start running that process.
 //  - eventually that process transfers control
 //    via swtch back to the scheduler.
+// Use Priority and in case of tie use RR
 void
 scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
+  static int last = -1;   // used by SCHEDULER_PRIORITY for round-robin among ties
 
   c->proc = 0;
   for (;;) {
-    // The most recent process to run may have had interrupts
-    // turned off; enable them to avoid a deadlock if all
-    // processes are waiting. Then turn them back off
-    // to avoid a possible race between an interrupt
-    // and wfi.
     intr_on();
     intr_off();
 
     int found = 0;
+
+#if defined(SCHEDULER_PRIORITY)
+
+    int min_priority = 101;   // above the valid 0-100 range
+    for (p = proc; p < &proc[NPROC]; p++) {
+      acquire(&p->lock);
+      if (p->state == RUNNABLE && p->priority < min_priority)
+        min_priority = p->priority;
+      release(&p->lock);
+    }
+
+    if (min_priority <= 100) {
+      for (int i = 0; i < NPROC; i++) {
+        int idx = (last + 1 + i) % NPROC;
+        p = &proc[idx];
+        acquire(&p->lock);
+        if (p->state == RUNNABLE && p->priority == min_priority) {
+          p->state = RUNNING;
+          c->proc = p;
+          swtch(&c->context, &p->context);
+          c->proc = 0;
+          last = idx;
+          found = 1;
+          release(&p->lock);
+          break;
+        }
+        release(&p->lock);
+      }
+    }
+
+#else
+    // original round-robin
     for (p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
       if (p->state == RUNNABLE) {
-        // Switch to chosen process.  It is the process's job
-        // to release its lock and then reacquire it
-        // before jumping back to us.
         p->state = RUNNING;
         c->proc = p;
         swtch(&c->context, &p->context);
-
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
         c->proc = 0;
         found = 1;
       }
       release(&p->lock);
     }
+#endif
+
     if (found == 0) {
-      // nothing to run; stop running on this core until an interrupt.
       asm volatile("wfi");
     }
   }
