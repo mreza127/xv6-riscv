@@ -128,6 +128,7 @@ sys_getpinfo(void)
     if (p->state != UNUSED) {
       pi[i].pid = p->pid;
       pi[i].state = p->state;
+      pi[i].priority = p->priority;
       safestrcpy(pi[i].name, p->name, sizeof(pi[i].name));
       i++;
     }

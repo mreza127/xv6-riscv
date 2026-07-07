@@ -6,6 +6,7 @@
 struct pinfo {
   int pid;
   int state;          // enum numeric value
+  int priority;
   char name[16];
 };
 
