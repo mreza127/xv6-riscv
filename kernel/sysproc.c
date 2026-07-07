@@ -6,6 +6,7 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "vm.h"
+#include "pinfo.h"
 
 uint64
 sys_exit(void)
@@ -106,4 +107,36 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+// new pinfo sys call
+// return the procs datas
+uint64
+sys_getpinfo(void)
+{
+  uint64 uaddr;
+  struct proc *p;
+  static struct pinfo pi[MAX_PROC];   
+  int i = 0;
+
+  argaddr(0, &uaddr);   
+
+  for (p = proc; p < &proc[NPROC]; p++) {
+    acquire(&p->lock);
+    if (p->state != UNUSED) {
+      pi[i].pid = p->pid;
+      pi[i].state = p->state;
+      safestrcpy(pi[i].name, p->name, sizeof(pi[i].name));
+      i++;
+    }
+    release(&p->lock);
+  }
+
+  for (int j = i; j < MAX_PROC; j++)
+    pi[j].pid = 0;   // mark trailing slots empty
+
+  if (copyout(myproc()->pagetable, uaddr, (char *)pi, sizeof(pi)) < 0)
+    return -1;
+
+  return i; // number of unempty slots (not UNUSED)
 }
