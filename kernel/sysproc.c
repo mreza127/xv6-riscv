@@ -111,7 +111,7 @@ sys_uptime(void)
   return xticks;
 }
 
-// new pinfo sys call
+// new getpinfo sys call
 // return the procs datas
 uint64
 sys_getpinfo(void)
@@ -142,4 +142,30 @@ sys_getpinfo(void)
     return -1;
 
   return i; // number of unempty slots (not UNUSED)
+}
+
+// new setpriority sys call
+// set the proc priority
+uint64
+sys_setpriority(void)
+{
+  int pid, priority;
+  struct proc *p;
+
+  argint(0, &pid);
+  argint(1, &priority);
+
+  if (priority < 0 || priority > 100)
+    return -1;
+
+  for (p = proc; p < &proc[NPROC]; p++) {
+    acquire(&p->lock);
+    if (p->pid == pid) {
+      p->priority = priority;
+      release(&p->lock);
+      return 0;
+    }
+    release(&p->lock);
+  }
+  return -1;   // no process with that pid
 }
