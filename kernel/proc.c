@@ -428,7 +428,6 @@ scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
-  static int last = -1;   // used by SCHEDULER_PRIORITY for round-robin among ties
 
   c->proc = 0;
   for (;;) {
@@ -439,6 +438,7 @@ scheduler(void)
 
 #if defined(SCHEDULER_PRIORITY)
 
+    static int last = -1;   // used by SCHEDULER_PRIORITY for round-robin among ties
     int min_priority = 101;   // above the valid 0-100 range
     for (p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);

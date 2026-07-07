@@ -84,6 +84,11 @@ ifneq ($(shell $(CC) -dumpspecs 2>/dev/null | grep -e '[^f]nopie'),)
 CFLAGS += -fno-pie -nopie
 endif
 
+# Set ScheDuler
+ifeq ($(SCHEDULER),PRIORITY)
+CFLAGS += -DSCHEDULER_PRIORITY
+endif
+
 LDFLAGS = -z max-page-size=4096
 
 $K/kernel: $(OBJS) $K/kernel.ld
@@ -148,6 +153,7 @@ UPROGS=\
 	$U/_sync\
 	$U/_ps\
 	$U/_chpri\
+	$U/_prio_test\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
