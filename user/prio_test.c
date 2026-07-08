@@ -25,7 +25,7 @@ main(void)
   pipe(fd);
 
   printf("Starting Priority Benchmark ...\n");
-  int start = uptime();
+  int start_time = uptime();
 
   for (int i = 0; i < n; i++) {
     int pid = fork();
