@@ -4,18 +4,27 @@
 #define WORK_TICKS 40
 
 struct result {
+  int pid;
   int priority;
-  long count;
+  int end_time;
 };
+
+void
+burn_cpu() 
+{
+  for (volatile long i = 0; i < 50000000; i++) {}
+}
 
 int
 main(void)
 {
-  int priorities[] = {10, 20, 50, 50, 70, 90};
-  int n = 6;
+  int priorities[] = {10, 50, 50, 90};
+  int n = 4;
   int fd[2];
+  
   pipe(fd);
 
+  printf("Starting Priority Benchmark ...\n");
   int start = uptime();
 
   for (int i = 0; i < n; i++) {
@@ -23,10 +32,10 @@ main(void)
     if (pid == 0) {
       close(fd[0]);
       setpriority(getpid(), priorities[i]);
-      long count = 0;
-      while (uptime() - start < WORK_TICKS)
-        count++;
-      struct result r = { priorities[i], count };
+      burn_cpu();
+      burn_cpu();
+      burn_cpu();
+      struct result r = { getpid(), priorities[i], uptime()-start_time };
       write(fd[1], &r, sizeof(r));
       close(fd[1]);
       exit(0);
@@ -34,15 +43,19 @@ main(void)
   }
   close(fd[1]);
 
+  printf("\n--- Execution Timeline ---\n");
+  printf("PID    PRIORITY    TURNAROUND TIME\n");
+
   for (int i = 0; i < n; i++) {
     struct result r;
     read(fd[0], &r, sizeof(r));
-    printf("priority=%d: %ld loop iterations\n", r.priority, r.count);
+    printf("%d    %d        %d ticks\n", r.pid, r.priority, r.end_time);
   }
   close(fd[0]);
 
   for (int i = 0; i < n; i++)
     wait(0);
 
+  printf("\nBenchmark complete.\n");
   exit(0);
 }
