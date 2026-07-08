@@ -18,11 +18,11 @@ main(void)
     exit(1);
   }
 
-  printf("PID    STATE        PRIORITY        NAME\n");
+  printf("PID    STATE        PRIORITY        TICKETS        NAME\n");
   for (int i = 0; i < MAX_PROC; i++) {
     if (pi[i].pid == 0)
       continue;
-    printf("%d    %s        %d        %s\n", pi[i].pid, states[pi[i].state], pi[i].priority, pi[i].name);
+    printf("%d    %s        %d        %d        %s\n", pi[i].pid, states[pi[i].state], pi[i].priority, pi[i].tickets, pi[i].name);
   }
   exit(0);
 }
