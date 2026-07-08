@@ -102,4 +102,5 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   int priority;                // 0 = highest priority, 100 = lowest
+  int tickets;                 // number of lottery tickets held
 };

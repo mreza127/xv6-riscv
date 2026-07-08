@@ -129,6 +129,7 @@ sys_getpinfo(void)
       pi[i].pid = p->pid;
       pi[i].state = p->state;
       pi[i].priority = p->priority;
+      pi[i].tickets = p->tickets;
       safestrcpy(pi[i].name, p->name, sizeof(pi[i].name));
       i++;
     }
