@@ -125,6 +125,7 @@ found:
   p->pid = allocpid();
   p->state = USED;
   p->priority = 50; // default priority
+  p->tickets = 1;   // default tickets
 
   // Allocate a trapframe page.
   if ((p->trapframe = (struct trapframe *)kalloc()) == 0) {
@@ -290,6 +291,7 @@ kfork(void)
   np->cwd = idup(p->cwd);
 
   safestrcpy(np->name, p->name, sizeof(p->name));
+  np->tickets = p->tickets;   // child inherits parent's ticket count
 
   pid = np->pid;
 
