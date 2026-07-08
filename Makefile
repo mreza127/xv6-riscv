@@ -89,6 +89,9 @@ endif
 ifeq ($(SCHEDULER),PRIORITY)
 CFLAGS += -DSCHEDULER_PRIORITY
 endif
+ifeq ($(SCHEDULER),LOTTERY)
+CFLAGS += -DSCHEDULER_LOTTERY
+endif
 
 LDFLAGS = -z max-page-size=4096
 
