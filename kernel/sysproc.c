@@ -170,3 +170,16 @@ sys_setpriority(void)
   }
   return -1;   // no process with that pid
 }
+
+// new settickets sys call
+// set the proc tickets
+uint64
+sys_settickets(void)
+{
+  int number;
+  argint(0, &number);
+  if (number < 1)
+    return -1;
+  myproc()->tickets = number;
+  return 0;
+}

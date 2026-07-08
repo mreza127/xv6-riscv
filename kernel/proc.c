@@ -468,6 +468,37 @@ scheduler(void)
       }
     }
 
+#elif defined(SCHEDULER_LOTTERY)
+
+    int total_tickets = 0;
+    for (p = proc; p < &proc[NPROC]; p++) {
+      acquire(&p->lock);
+      if (p->state == RUNNABLE)
+        total_tickets += p->tickets;
+      release(&p->lock);
+    }
+
+    if (total_tickets > 0) {
+      int winner = (my_rand() % total_tickets) + 1;   // 1..total_tickets
+      int counter = 0;
+      for (p = proc; p < &proc[NPROC]; p++) {
+        acquire(&p->lock);
+        if (p->state == RUNNABLE) {
+          counter += p->tickets;
+          if (counter >= winner) {
+            p->state = RUNNING;
+            c->proc = p;
+            swtch(&c->context, &p->context);
+            c->proc = 0;
+            found = 1;
+            release(&p->lock);
+            break;
+          }
+        }
+        release(&p->lock);
+      }
+    }
+
 #else
     // original round-robin
     for (p = proc; p < &proc[NPROC]; p++) {
