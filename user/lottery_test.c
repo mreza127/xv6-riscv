@@ -30,7 +30,7 @@ main(void)
     int pid = fork();
     if (pid == 0) {
       close(fd[0]);
-      settickets(tickets[i]);
+      settickets(getpid(), tickets[i]);
       burn_cpu();
       burn_cpu();
       burn_cpu();

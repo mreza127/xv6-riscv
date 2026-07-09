@@ -176,10 +176,24 @@ sys_setpriority(void)
 uint64
 sys_settickets(void)
 {
-  int number;
-  argint(0, &number);
-  if (number < 1)
-    return -1;
-  myproc()->tickets = number;
-  return 0;
+  int pid, tickets;
+  struct proc *p;
+
+ argint(0, &pid);
+ argint(1, &tickets);
+
+  if (tickets < 1) 
+    tickets = 1;
+
+  for (p = proc; p < &proc[NPROC]; p++){
+    acquire(&p->lock);
+    if (p->pid == pid){
+      p->tickets = tickets;
+      release(&p->lock);
+      return 0; 
+    }
+    release(&p->lock);
+  }
+
+  return -1; // no process with that pid
 }
