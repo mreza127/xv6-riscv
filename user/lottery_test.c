@@ -8,22 +8,23 @@ struct result {
 };
 
 
-void 
-burn_cpu() 
-{
+void burn_cpu() {
   for (volatile long i = 0; i < 50000000; i++) {}
 }
 
 int 
 main(void) 
 {
-  int tickets[] = {10, 20, 30};
-  int n = 3;
+  int tickets[] = {10, 30, 50, 70, 100};
+  int n = 5;
   int fd[2];
   
   pipe(fd);
 
   printf("Starting Lottery Benchmark ...\n");
+  
+  settickets(getpid(), 10000);	
+
   int start_time = uptime();
 
   for (int i = 0; i < n; i++) {
@@ -43,19 +44,40 @@ main(void)
   }
   close(fd[1]);
 
-  printf("\n--- Execution Timeline ---\n");
-  printf("PID    TICKETS        TURNAROUND TIME\n");
-  
+  printf("\nLottery Benchmark Results\n");
+  printf("=====================================\n");
+  printf("PID  TICKETS  TURNAROUND\n");
+  printf("-------------------------------------\n");
+
   for (int i = 0; i < n; i++) {
     struct result r;
     read(fd[0], &r, sizeof(r));
-    printf("%d    %d        %d ticks\n", r.pid, r.tickets, r.end_time);
+    
+    // PID (2 digits)
+    if (r.pid < 10)
+      printf(" ");
+    printf("%d   ", r.pid);
+
+    // Tickets (3 digits)
+    if (r.tickets < 10)
+      printf("  ");
+    else if (r.tickets < 100)
+      printf(" ");
+    printf("%d      ", r.tickets);
+
+    // Turnaround
+    if (r.end_time < 10)
+      printf("  ");
+    else if (r.end_time < 100)
+      printf(" ");
+    printf("%d ticks\n", r.end_time);
   }
   close(fd[0]);
 
   for (int i = 0; i < n; i++) 
     wait(0);
 
-  printf("\nLottery Benchmark complete.\n");
+  printf("=====================================\n");
+  printf("\nLottery Benchmark complete.\n\n");
   exit(0);
 }
