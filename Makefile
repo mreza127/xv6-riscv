@@ -159,6 +159,7 @@ UPROGS=\
 	$U/_chpri\
 	$U/_priority_test\
         $U/_lottery_test\
+	$U/_ps_test\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

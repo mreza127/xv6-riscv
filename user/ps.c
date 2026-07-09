@@ -60,4 +60,8 @@ main(void)
     // NAME
     printf("%s\n", pi[i].name);
   }
+
+  printf("----------------------------------------\n");
+
+  exit(0);
 }
