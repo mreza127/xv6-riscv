@@ -18,11 +18,46 @@ main(void)
     exit(1);
   }
 
-  printf("PID    STATE        PRIORITY        TICKETS        NAME\n");
+  if (n == 0) {
+    printf("ps: there is no proc");
+    exit(0);
+  }
+	
+  printf("PID  STATE      PRI  TICKETS  NAME\n");
+  printf("----------------------------------------\n");
+
   for (int i = 0; i < MAX_PROC; i++) {
     if (pi[i].pid == 0)
       continue;
-    printf("%d    %s        %d        %d        %s\n", pi[i].pid, states[pi[i].state], pi[i].priority, pi[i].tickets, pi[i].name);
+
+    // PID (2 columns)
+    if (pi[i].pid < 10)
+      printf(" ");
+    printf("%d   ", pi[i].pid);
+
+    // STATE (10 columns)
+    printf("%s", states[pi[i].state]);
+    int j = 0;
+    while (states[pi[i].state][j])
+      j++;
+    while (j++ < 10)
+      printf(" ");
+
+    // PRIORITY (3 columns)
+    if (pi[i].priority < 10)
+      printf("  ");
+    else if (pi[i].priority < 100)
+      printf(" ");
+    printf("%d   ", pi[i].priority);
+
+    // TICKETS (3 columns)
+    if (pi[i].tickets < 10)
+      printf("  ");
+    else if (pi[i].tickets < 100)
+      printf(" ");
+    printf("%d      ", pi[i].tickets);
+
+    // NAME
+    printf("%s\n", pi[i].name);
   }
-  exit(0);
 }
