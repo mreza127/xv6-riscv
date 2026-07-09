@@ -135,7 +135,7 @@ static uint64 (*syscalls[])(void) = {
   [SYS_sync]        sys_sync,
   [SYS_getpinfo]    sys_getpinfo,
   [SYS_setpriority] sys_setpriority,
-  [SYS_settickets] sys_settickets,
+  [SYS_settickets]  sys_settickets,
   // clang-format oin
 };
 

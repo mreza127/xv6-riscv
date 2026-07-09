@@ -13,7 +13,7 @@ static int rand_local(void) {
 }
 
 static void burn_cpu(void) {
-  for (volatile long i = 0; i < 200000000; i++) {}
+  for (volatile long i = 0; i < 200000000; i++);
 }
 
 static void run_ps(void) {

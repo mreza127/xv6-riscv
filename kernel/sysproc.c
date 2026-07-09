@@ -183,7 +183,7 @@ sys_settickets(void)
  argint(1, &tickets);
 
   if (tickets < 1) 
-    tickets = 1;
+    return -1;
 
   for (p = proc; p < &proc[NPROC]; p++){
     acquire(&p->lock);

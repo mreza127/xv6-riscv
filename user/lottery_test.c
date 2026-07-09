@@ -7,15 +7,14 @@ struct result {
   int end_time;
 };
 
-
 void burn_cpu() {
-  for (volatile long i = 0; i < 50000000; i++) {}
+  for (volatile long i = 0; i < 200000000; i++);
 }
 
 int 
 main(void) 
 {
-  int tickets[] = {10, 30, 50, 70, 100};
+  int tickets[] = {10, 45, 80, 115, 150};
   int n = 5;
   int fd[2];
   
@@ -23,7 +22,7 @@ main(void)
 
   printf("Starting Lottery Benchmark ...\n");
   
-  settickets(getpid(), 10000);	
+  settickets(getpid(), 999);	
 
   int start_time = uptime();
 
@@ -65,7 +64,7 @@ main(void)
       printf(" ");
     printf("%d      ", r.tickets);
 
-    // Turnaround
+    // Turnaround time
     if (r.end_time < 10)
       printf("  ");
     else if (r.end_time < 100)

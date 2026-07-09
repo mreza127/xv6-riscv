@@ -424,7 +424,7 @@ kwait(uint64 addr)
 //  - swtch to start running that process.
 //  - eventually that process transfers control
 //    via swtch back to the scheduler.
-// Use Priority and in case of tie use RR
+// Could Use RR/Priority/Lottery (RR for default, in other two use RR in case of tie)
 void
 scheduler(void)
 {
@@ -440,7 +440,7 @@ scheduler(void)
 
 #if defined(SCHEDULER_PRIORITY)
 
-    static int last = -1;   // used by SCHEDULER_PRIORITY for round-robin among ties
+    static int last = -1;     // used for round-robin among ties
     int min_priority = 101;   // above the valid 0-100 range
     for (p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
@@ -500,6 +500,7 @@ scheduler(void)
     }
 
 #else
+
     // original round-robin
     for (p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
@@ -512,6 +513,7 @@ scheduler(void)
       }
       release(&p->lock);
     }
+
 #endif
 
     if (found == 0) {

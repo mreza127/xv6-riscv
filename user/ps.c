@@ -19,7 +19,7 @@ main(void)
   }
 
   if (n == 0) {
-    printf("ps: there is no proc");
+    printf("\nps: there is no process\n");
     exit(0);
   }
 	

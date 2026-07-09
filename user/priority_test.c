@@ -8,7 +8,7 @@ struct result {
 };
 
 void burn_cpu() {
-  for (volatile long i = 0; i < 50000000; i++) {}
+  for (volatile long i = 0; i < 200000000; i++);
 }
 
 int
@@ -51,6 +51,7 @@ main(void)
   for (int i = 0; i < n; i++) {
     struct result r;
     read(fd[0], &r, sizeof(r));
+
     // PID (2 digits)
     if (r.pid < 10)
       printf(" ");
