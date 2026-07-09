@@ -14,8 +14,8 @@ void burn_cpu() {
 int 
 main(void) 
 {
-  int tickets[] = {10, 45, 80, 115, 150};
-  int n = 5;
+  int tickets[] = {10, 45, 80, 80, 115, 150};
+  int n = 6;
   int fd[2];
   
   pipe(fd);
