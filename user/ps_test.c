@@ -67,7 +67,7 @@ main(void)
     }
   }
 
-  printf("\nps_test: %d children running with random priority/tickets/behavior\n\n", n);
+  printf("ps_test: %d children running with random priority/tickets/behavior\n", n);
 
   for (int round = 1; round <= 3; round++) {
     printf("=== ps snapshot %d ===\n", round);
